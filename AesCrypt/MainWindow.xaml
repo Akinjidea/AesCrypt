@@ -1,0 +1,46 @@
+﻿<Window x:Class="AesCrypt.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AesCrypt"
+        mc:Ignorable="d"
+        Title="AesCryptograph" Height="500" Width="300" Background="#EEEEEE" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <StackPanel>
+        <StackPanel.Background>
+            <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                <GradientStop Color="#bdc3c7" Offset="0" />
+                <GradientStop Color="#2c3e50" Offset="1.3" />
+            </LinearGradientBrush>
+        </StackPanel.Background>
+
+        <Label FontSize="24" HorizontalAlignment="Center" Margin="0,20,0,5" Content="Welcome"/>
+
+        <RadioButton Name="encryptionRadio" FontSize="16" GroupName="CryptoType" IsChecked="True" 
+                     HorizontalAlignment="Left" Margin="20,0,0,0" Content="Encryption"/>
+        <RadioButton Name="decryptionRadio" FontSize="16" GroupName="CryptoType" 
+                     HorizontalAlignment="Right" Margin="0,-20,20,0" Checked="DecryptionChecked"
+                     Unchecked="DecryptionUnchecked" Content="Decryption"/>
+
+        <Label FontSize="18" HorizontalAlignment="Center" Margin="0,10,0,10" Content="Input your file location"/>
+        <TextBox Name="locationField" FontSize="16" Width="250" Background="#EEEEEE"/>
+
+        <CheckBox Name="emptyProjectCheckBox" FontSize="14" Width="60" Margin="30,15,0,0" HorizontalAlignment="Left"
+                  Checked="EmptyProjectChecked" Unchecked="EmptyProjectUnchecked" Content="Empty"/>
+        <Button Name="setLocationButton" FontSize="14" Width="100" Height="25" Margin="0,-20,30,0" HorizontalAlignment="Right" 
+                Click="SetFileLocation" Content="Set"/>
+
+        <Label Name="passLabel" FontSize="18" HorizontalAlignment="Center" Margin="0,10,0,10" Content="Input your master-password"/>
+        <PasswordBox Name="passField" FontSize="16" Width="250" Margin="0,0,0,0" Background="#EEEEEE"/>
+
+        <Label Name="passCheckLabel" FontSize="18" HorizontalAlignment="Center" Margin="0,10,0,10" Content="Repeat your master-password"/>
+        <PasswordBox Name="passCheckField" FontSize="16" Width="250" Margin="0,0,0,20" Background="#EEEEEE"/>
+
+        <Button Name="createButton" FontSize="14" Width="100" Height="25" Margin="0,30,0,0" Visibility="Collapsed"
+                VerticalAlignment="Bottom" HorizontalAlignment="Center" Click="CreateNewFile" Content="Create"/>
+        <Button Name="openButton" FontSize="14" Width="100" Height="25" Margin="0,30,120,0" Visibility="Hidden" 
+                VerticalAlignment="Bottom" HorizontalAlignment="Center" Click="OpenFile" Content="Open"/>
+        <Button Name="saveButton" FontSize="14" Width="100" Height="25" Margin="120,-250,0,0" 
+                VerticalAlignment="Bottom" HorizontalAlignment="Center" Click="SaveConvertedFile" Content="Save"/>
+    </StackPanel>
+</Window>
