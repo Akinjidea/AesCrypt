@@ -19,6 +19,7 @@ namespace AesCrypt
             App.Current.MainWindow.Close();
 
         }
+
         internal static void OpenFile(string location, string pass)
         {
             byte[] data;
@@ -50,40 +51,35 @@ namespace AesCrypt
             App.Current.MainWindow.Close();
 
         }
+
         internal static void SaveEncryptedFile(string data, string pass)
         {
             DataCrypto dataCrypto = new DataCrypto();
             byte[] text = dataCrypto.OpenSSLEncrypt(data, pass);
-            data = "";
+            data = null;
             dataCrypto = null;
-            pass = "";
+            pass = null;
 
-            SaveFileDialog saveFileDialog = new SaveFileDialog
-            {
-                Filter = "aes files (*.aes)|*.txt|All files (*.*)|*.*",
-                FilterIndex = 1,
-                RestoreDirectory = true
-            };
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                File.WriteAllBytes(saveFileDialog.FileName, text);
-                text = null;
-
-            }
+            CallFileDialog(text);
+            Console.WriteLine("Haha");
+            text = null;
         }    
-        
         internal static void SaveDecryptedFile(byte[] data, string pass)
         {
             DataCrypto dataCrypto = new DataCrypto();
             string text = dataCrypto.OpenSSLDecrypt(data, pass);
             data = null;
             dataCrypto = null;
-            pass = "";
+            pass = null;
 
             if(text.Equals(""))
                 return;
+            CallFileDialog(text);
+            text = null;
+        }
 
+        internal static void CallFileDialog(string text)
+        {
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
@@ -98,6 +94,22 @@ namespace AesCrypt
 
             }
         }
+        internal static void CallFileDialog(byte[] text)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "aes files (*.aes)|*.txt|All files (*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = true
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                File.WriteAllBytes(saveFileDialog.FileName, text);
+                text = null;
+            }
+        }
+
         internal static string SetFileLocation()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();

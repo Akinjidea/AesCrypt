@@ -22,10 +22,16 @@ namespace AesCrypt
         public Cryption()
         {
             InitializeComponent();
+            CustomizationView();
+        }
+
+        private void CustomizationView()
+        {
             if (!MainWindow.emptyFileBool.GetValueOrDefault())
             {
                 saveNewFileButton.Visibility = Visibility.Visible;
                 showPassPanelButton.Visibility = Visibility.Collapsed;
+                passPanel.Visibility = Visibility.Collapsed;
             }
             if (!MainWindow.encStateBool)
             {
@@ -35,6 +41,48 @@ namespace AesCrypt
             }
         }
 
+        private void ShowPassPanel(object sender, RoutedEventArgs e)
+        {
+            passPanel.Visibility = Visibility.Visible;
+            showPassPanelButton.Visibility = Visibility.Collapsed;
+            hidePassPanelButton.Visibility = Visibility.Visible;
+        }
+        private void HidePassPanel(object sender, RoutedEventArgs e)
+        {
+            passPanel.Visibility = Visibility.Collapsed;
+            showPassPanelButton.Visibility = Visibility.Visible;
+            hidePassPanelButton.Visibility = Visibility.Collapsed;
+        }
+
+        private void OpenDataLocal(object sender, RoutedEventArgs e)
+        {
+            
+            DataCrypto dataCrypto = new DataCrypto();
+            if (!MainWindow.encStateBool)
+            {
+                string text = dataCrypto.OpenSSLDecrypt(Encoding.ASCII.GetBytes(dataContent.Text), passField.Password);
+
+                CustomizationView();
+                dataContent.Text = text;
+                text = null;
+            }
+            else
+            {
+                if (passField.Password.Equals(passCheckField.Password))
+                {
+                    byte[] data = dataCrypto.OpenSSLEncrypt(dataContent.Text, passField.Password);
+
+                    CustomizationView();
+                    dataContent.Text = Encoding.ASCII.GetString(data);
+                    data = null;
+                }
+                else
+                    MessageBox.Show("Passwords are not same!");
+            }
+            passField.Password = "";
+            passCheckField.Password = "";
+            dataCrypto = null;
+        }
         private void SaveDataToFile(object sender, RoutedEventArgs e)
         {
             if (!MainWindow.encStateBool)
@@ -54,10 +102,6 @@ namespace AesCrypt
             passField.Password = "";
             passCheckField.Password = "";
         }
-        private void OpenDataLocal(object sender, RoutedEventArgs e)
-        {
-
-        }
         private void BackToMainMenu(object sender, RoutedEventArgs e)
         {
             this.Hide();
@@ -65,20 +109,18 @@ namespace AesCrypt
             mainWindow.Show();
             this.Close();
         }
-        private void ShowPassPanel(object sender, RoutedEventArgs e)
-        {
-            passPanel.Visibility = Visibility.Visible;
-            showPassPanelButton.Visibility = Visibility.Collapsed;
-            hidePassPanelButton.Visibility = Visibility.Visible;
-        }
-        private void HidePassPanel(object sender, RoutedEventArgs e)
-        {
-            passPanel.Visibility = Visibility.Collapsed;
-            showPassPanelButton.Visibility = Visibility.Visible;
-            hidePassPanelButton.Visibility = Visibility.Collapsed;
-        }
+        
         private void SaveNewFile(object sender, RoutedEventArgs e)
         {
+            if (!MainWindow.encStateBool)
+            {
+                //decrypted
+            }
+            else
+            {
+                //encrypted
+            }
+
             MessageBox.Show("Successfully!");
             this.Hide();
             MainWindow mainWindow = new MainWindow();
