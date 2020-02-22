@@ -33,7 +33,16 @@ namespace AesCrypt
         {
             byte[] encryptedBytesWithSalt = encrypted;
             byte[] salt = new byte[8];
-            byte[] encryptedBytes = new byte[encryptedBytesWithSalt.Length - salt.Length - 8];
+            byte[] encryptedBytes = { };
+            try
+            {
+                encryptedBytes = new byte[encryptedBytesWithSalt.Length - salt.Length - 8];
+            }
+            catch(OverflowException)
+            {
+                MessageBox.Show("Incorrect input data!");
+                return "";
+            }
             Buffer.BlockCopy(encryptedBytesWithSalt, 8, salt, 0, salt.Length);
             Buffer.BlockCopy(encryptedBytesWithSalt, salt.Length + 8, encryptedBytes, 0, encryptedBytes.Length);
             byte[] key, iv;
@@ -84,7 +93,7 @@ namespace AesCrypt
             if (iv == null || iv.Length <= 0)
                 throw new ArgumentNullException("iv");
 
-            MemoryStream msEncrypt;
+            MemoryStream msEncrypt = null;
             RijndaelManaged aesAlg = null;
 
             try
@@ -101,6 +110,10 @@ namespace AesCrypt
                         swEncrypt.Close();
                     }
                 }
+            }
+            catch(CryptographicException)
+            {
+                MessageBox.Show("Error!");
             }
             finally
             {
@@ -123,7 +136,7 @@ namespace AesCrypt
 
             RijndaelManaged aesAlg = null;
 
-            string plaintext;
+            string plaintext = "";
 
             try
             {
@@ -141,6 +154,10 @@ namespace AesCrypt
                         }
                     }
                 }
+            }
+            catch (CryptographicException )
+            {
+                MessageBox.Show("Incorrect key!");
             }
             finally
             {

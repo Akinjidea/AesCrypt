@@ -35,9 +35,16 @@ namespace AesCrypt
 
             DataCrypto dataCrypto = new DataCrypto();
             cryption.dataContent.Text = dataCrypto.OpenSSLDecrypt(data, pass);
-            dataCrypto = null;
             data = null;
+            dataCrypto = null;
             pass = "";
+
+            if(cryption.dataContent.Text.Equals(""))
+            {
+                cryption = null;
+                return;
+            }
+
 
             cryption.Show();
             App.Current.MainWindow.Close();
@@ -49,6 +56,7 @@ namespace AesCrypt
             byte[] text = dataCrypto.OpenSSLEncrypt(data, pass);
             data = "";
             dataCrypto = null;
+            pass = "";
 
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
@@ -71,6 +79,10 @@ namespace AesCrypt
             string text = dataCrypto.OpenSSLDecrypt(data, pass);
             data = null;
             dataCrypto = null;
+            pass = "";
+
+            if(text.Equals(""))
+                return;
 
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {

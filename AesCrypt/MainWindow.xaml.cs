@@ -125,9 +125,7 @@ namespace AesCrypt
                 else
                     MessageBox.Show("Passwords are not same!");
             }
-            locationField.Text = "";
-            passField.Password = "";
-            passCheckField.Password = "";
+            CleanVariables();
         }
         private void OpenFile(object sender, RoutedEventArgs e)
         {
@@ -142,6 +140,11 @@ namespace AesCrypt
                 return;
             }
             CrudFile.OpenFile(locationField.Text, passField.Password);
+            CleanVariables();
+        }
+
+        private void CleanVariables()
+        {
             locationField.Text = "";
             passField.Password = "";
             passCheckField.Password = "";

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AesCrypt"
         mc:Ignorable="d"
-        Title="Cryption" Height="600" Width="1200" WindowStartupLocation="CenterScreen"
+        Title="Encryption" Height="600" Width="1200" WindowStartupLocation="CenterScreen"
         MinWidth="320" MinHeight="300" MaxWidth="1600" MaxHeight="820">
     <Grid>
         <Grid.Background>

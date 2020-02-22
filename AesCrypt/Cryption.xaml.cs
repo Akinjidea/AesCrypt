@@ -29,6 +29,7 @@ namespace AesCrypt
             }
             if (!MainWindow.encStateBool)
             {
+                this.Title = "Decryption";
                 passCheckLabel.Visibility = Visibility.Collapsed;
                 passCheckField.Visibility = Visibility.Collapsed;
             }
@@ -49,6 +50,7 @@ namespace AesCrypt
                 else
                     MessageBox.Show("Passwords are not same!");
             }
+            dataContent.Text = "";
             passField.Password = "";
             passCheckField.Password = "";
         }
