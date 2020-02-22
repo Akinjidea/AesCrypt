@@ -127,5 +127,15 @@ namespace AesCrypt
             mainWindow.Show();
             this.Close();
         }
+
+        private void ExitEverywhere(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        private void ExitHandler(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
     }
 }

@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AesCrypt"
         mc:Ignorable="d"
+        Closing="ExitHandler"
         Title="Encryption" Height="600" Width="1200" WindowStartupLocation="CenterScreen"
         MinWidth="320" MinHeight="300" MaxWidth="1600" MaxHeight="820">
     <Grid>
@@ -23,9 +24,10 @@
         <Grid Grid.Column="0">
             <TextBox Name="dataContent" FontSize="16" Margin="10,10,10,50" TextWrapping="Wrap" 
                      ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" AcceptsTab="True"/>
-            <Button Name="showPassPanelButton" FontSize="14" Width="100" Height="25" VerticalAlignment="Bottom" Margin="0,0,0,10" Click="ShowPassPanel" Content="Show"/>
-            <Button Name="hidePassPanelButton"  FontSize="14" Width="100" Height="25" VerticalAlignment="Bottom" Margin="0,0,0,10" Visibility="Collapsed" Click="HidePassPanel" Content="Hide" />
-            <Button Name="saveNewFileButton"  FontSize="14" Width="100" Height="25" VerticalAlignment="Bottom" Margin="0,0,0,10" Visibility="Collapsed" Click="SaveNewFile" Content="Save" />
+            <Button Name="showPassPanelButton" FontSize="14" Width="100" Height="25" VerticalAlignment="Bottom" Margin="0,0,150,10" Click="ShowPassPanel" Content="Show"/>
+            <Button Name="hidePassPanelButton"  FontSize="14" Width="100" Height="25" VerticalAlignment="Bottom" Margin="0,0,150,10" Visibility="Collapsed" Click="HidePassPanel" Content="Hide" />
+            <Button Name="saveNewFileButton"  FontSize="14" Width="100" Height="25" VerticalAlignment="Bottom" Margin="0,0,150,10" Visibility="Collapsed" Click="SaveNewFile" Content="Save" />
+            <Button Name="exitButton"  FontSize="14" Width="100" Height="25" VerticalAlignment="Bottom" Margin="150,0,0,10" Click="ExitEverywhere" Content="Exit" />
         </Grid>
 
         <StackPanel Name="passPanel" Grid.Column="1" VerticalAlignment="Center" Visibility="Visible">
