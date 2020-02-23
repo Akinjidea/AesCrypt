@@ -58,20 +58,29 @@ namespace AesCrypt
         {
             
             DataCrypto dataCrypto = new DataCrypto();
-            if (!MainWindow.encStateBool)
+            if (!MainWindow.encStateBool) //Decryption
             {
                 string text = dataCrypto.OpenSSLDecrypt(Encoding.ASCII.GetBytes(dataContent.Text), passField.Password);
-
+                if(text.Equals(""))
+                {
+                    passField.Password = "";
+                    passCheckField.Password = "";
+                    dataCrypto = null;
+                    text = null;
+                    MessageBox.Show("Error while trying to decrypt data!");
+                    return;
+                }
+                MainWindow.emptyFileBool = false;
                 CustomizationView();
                 dataContent.Text = text;
                 text = null;
             }
-            else
+            else //Encryption
             {
                 if (passField.Password.Equals(passCheckField.Password))
                 {
                     byte[] data = dataCrypto.OpenSSLEncrypt(dataContent.Text, passField.Password);
-
+                    MainWindow.emptyFileBool = false;
                     CustomizationView();
                     dataContent.Text = Encoding.ASCII.GetString(data);
                     data = null;
@@ -112,28 +121,24 @@ namespace AesCrypt
         
         private void SaveNewFile(object sender, RoutedEventArgs e)
         {
-            if (!MainWindow.encStateBool)
+            if (!MainWindow.encStateBool) //decrypted
             {
-                //decrypted
+                CrudFile.CallFileDialog(dataContent.Text);
             }
-            else
+            else //encrypted
             {
-                //encrypted
+                CrudFile.CallFileDialog(dataContent.Text);
             }
 
+            dataContent.Text = "";
             MessageBox.Show("Successfully!");
             this.Hide();
             MainWindow mainWindow = new MainWindow();
             mainWindow.Show();
             this.Close();
         }
-
+        
         private void ExitEverywhere(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
-
-        private void ExitHandler(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Application.Current.Shutdown();
         }
