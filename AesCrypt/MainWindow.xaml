@@ -23,7 +23,7 @@
                      Unchecked="DecryptionUnchecked" Content="Decryption"/>
 
         <Label FontSize="18" HorizontalAlignment="Center" Margin="0,10,0,10" Content="Input your file location"/>
-        <TextBox Name="locationField" FontSize="16" Width="250" Background="#EEEEEE"/>
+        <TextBox Name="locationField" FontSize="16" Width="250" Background="#EEEEEE" IsReadOnly="True"/>
 
         <CheckBox Name="emptyProjectCheckBox" FontSize="14" Width="60" Margin="30,15,0,0" HorizontalAlignment="Left"
                   Checked="EmptyProjectChecked" Unchecked="EmptyProjectUnchecked" Content="Empty"/>

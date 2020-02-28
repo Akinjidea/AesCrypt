@@ -68,7 +68,6 @@ namespace AesCrypt
             locationField.Text = null;
             passField.Password = null;
             passCheckField.Password = null;
-            locationField.IsReadOnly = true;
             locationField.Background = (Brush)bc.ConvertFrom("#BBBBBB");
         }
         private void EmptyProjectUnchecked(object sender, RoutedEventArgs e)
@@ -96,7 +95,6 @@ namespace AesCrypt
             }
 
             var bc = new BrushConverter();
-            locationField.IsReadOnly = false;
             locationField.Background = (Brush)bc.ConvertFrom("#EEEEEE");
         }
     
@@ -112,6 +110,16 @@ namespace AesCrypt
 
         private void SaveConvertedFile(object sender, RoutedEventArgs e)
         {
+            if (locationField.Text.Equals(""))
+            {
+                MessageBox.Show("Filelocation is empty!");
+                return;
+            }
+            if (passField.Password.Equals(""))
+            {
+                MessageBox.Show("Passfiled is empty!");
+                return;
+            }
             if (!encStateBool)
             {
                 CrudFile.SaveDecryptedFile(File.ReadAllBytes(locationField.Text), passField.Password);

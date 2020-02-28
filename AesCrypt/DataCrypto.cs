@@ -15,6 +15,11 @@ namespace AesCrypt
     {
         public byte[] OpenSSLEncrypt(string plainText, string passphrase)
         {
+            if (plainText == "" || passphrase == "")
+            {
+                MessageBox.Show("Text is empty!");
+                return null;
+            }
             byte[] key, iv;
             byte[] salt = new byte[8];
             RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
@@ -31,6 +36,11 @@ namespace AesCrypt
 
         public string OpenSSLDecrypt(byte[] encrypted, string passphrase)
         {
+            if (encrypted == null || passphrase == "")
+            {
+                MessageBox.Show("Data empty!");
+                return "";
+            }
             byte[] encryptedBytesWithSalt = encrypted;
             byte[] salt = new byte[8];
             byte[] encryptedBytes = { };
@@ -55,7 +65,7 @@ namespace AesCrypt
         {
             List<byte> concatenatedHashes = new List<byte>(48);
 
-            byte[] password = Encoding.UTF8.GetBytes(passphrase);
+            byte[] password = Encoding.ASCII.GetBytes(passphrase);
             byte[] currentHash = new byte[0];
             MD5 md5 = MD5.Create();
             bool enoughBytesForKey = false;

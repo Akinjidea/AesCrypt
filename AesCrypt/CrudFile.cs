@@ -23,6 +23,7 @@ namespace AesCrypt
         internal static void OpenFile(string location, string pass)
         {
             byte[] data;
+            MainWindow.encStateBool = true;
             Cryption cryption = new Cryption();
             try
             {
@@ -33,7 +34,6 @@ namespace AesCrypt
                 MessageBox.Show("File not found! Please, try again.");
                 return;
             }
-
             DataCrypto dataCrypto = new DataCrypto();
             cryption.dataContent.Text = dataCrypto.OpenSSLDecrypt(data, pass);
             data = null;
@@ -61,7 +61,6 @@ namespace AesCrypt
             pass = null;
 
             CallFileDialog(text);
-            Console.WriteLine("Haha");
             text = null;
         }    
         internal static void SaveDecryptedFile(byte[] data, string pass)
