@@ -19,21 +19,19 @@ namespace AesCrypt
     /// </summary>
     public partial class Cryption : Window
     {
+        internal bool encStateBool;
         public Cryption()
         {
             InitializeComponent();
             CustomizationView();
         }
-
         private void CustomizationView()
         {
-            if (!MainWindow.emptyFileBool.GetValueOrDefault())
+            if (!MainWindow.emptyFileBool)
             {
-                saveNewFileButton.Visibility = Visibility.Visible;
-                showPassPanelButton.Visibility = Visibility.Visible;
                 passPanel.Visibility = Visibility.Collapsed;
             }
-            if (!MainWindow.encStateBool)
+            if (!encStateBool)
             {
                 this.Title = "Decryption";
                 passCheckLabel.Visibility = Visibility.Collapsed;
@@ -47,19 +45,76 @@ namespace AesCrypt
             }
         }
 
+        //FIRST MENUITEM - FILE
+        private void SetNewFile(object sender, RoutedEventArgs e)
+        {
+            dataContent.Text = "";
+            passField.Password = "";
+            passCheckField.Password = "";
+        } //Exist
+
+        private void OpenEncryptedFile(object sender, RoutedEventArgs e)
+        {
+            string file = CrudFile.SetFileLocation();
+            dataContent.Text = Encoding.Default.GetString(CrudFile.CallOpenFileDialogB(file));
+        }
+        private void OpenDecryptedFile(object sender, RoutedEventArgs e)
+        {
+            string file = CrudFile.SetFileLocation();
+            dataContent.Text = CrudFile.CallOpenFileDialogS(file);
+        }
+
+        private void SaveContextToFile(object sender, RoutedEventArgs e)
+        {
+            if (!encStateBool) //decrypted
+            {
+                CrudFile.CallSaveFileDialog(dataContent.Text);
+            }
+            else //encrypted
+            {
+                CrudFile.CallSaveFileDialog(dataContent.Text);
+            }
+            dataContent.Text = "";
+            MessageBox.Show("Successfully!");
+            this.Hide();
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.Show();
+            this.Close();
+        } //Exist, Need check
+
+        private void ExitEverywhere(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        } //Exist
+
+        //SECOND MENUITEM - PASS PANEL
+        //Visibilty Pass Panel
         private void ShowPassPanel(object sender, RoutedEventArgs e)
         {
             passPanel.Visibility = Visibility.Visible;
-            showPassPanelButton.Visibility = Visibility.Collapsed;
-            hidePassPanelButton.Visibility = Visibility.Visible;
-        }
+        } //Exist
         private void HidePassPanel(object sender, RoutedEventArgs e)
         {
             passPanel.Visibility = Visibility.Collapsed;
-            showPassPanelButton.Visibility = Visibility.Visible;
-            hidePassPanelButton.Visibility = Visibility.Collapsed;
-        }
+        } //Exist
 
+        //Cryption Mode
+        private void SetEncryptionMode(object sender, RoutedEventArgs e)
+        {
+            this.Title = "Encryption";
+            passCheckLabel.Visibility = Visibility.Visible;
+            passCheckField.Visibility = Visibility.Visible;
+            encStateBool = true;
+        } //Exist
+        private void SetDecryptionMode(object sender, RoutedEventArgs e)
+        {
+            this.Title = "Decryption";
+            passCheckLabel.Visibility = Visibility.Collapsed;
+            passCheckField.Visibility = Visibility.Collapsed;
+            encStateBool = false;
+        } //Exist
+
+        //PASS PANEL CONTROLLERS
         private void OpenDataLocal(object sender, RoutedEventArgs e)
         {
             if (dataContent.Text == "" || passField.Password == "")
@@ -71,7 +126,7 @@ namespace AesCrypt
                 return;
             }
             DataCrypto dataCrypto = new DataCrypto();
-            if (!MainWindow.encStateBool) //Decryption
+            if (!encStateBool) //Decryption
             {
                 string text = dataCrypto.OpenSSLDecrypt(Encoding.ASCII.GetBytes(dataContent.Text), passField.Password);
                 if(text.Equals(""))
@@ -84,7 +139,7 @@ namespace AesCrypt
                     return;
                 }
                 MainWindow.emptyFileBool = false;
-                MainWindow.encStateBool = true;
+                encStateBool = true;
                 CustomizationView();
                 dataContent.Text = text;
                 text = null;
@@ -95,7 +150,7 @@ namespace AesCrypt
                 {
                     byte[] data = dataCrypto.OpenSSLEncrypt(dataContent.Text, passField.Password);
                     MainWindow.emptyFileBool = false;
-                    MainWindow.encStateBool = false;
+                    encStateBool = false;
                     CustomizationView();
                     dataContent.Text = Encoding.ASCII.GetString(data);
                     data = null;
@@ -106,7 +161,7 @@ namespace AesCrypt
             passField.Password = "";
             passCheckField.Password = "";
             dataCrypto = null;
-        }
+        } //Exist, Need check
         private void SaveDataToFile(object sender, RoutedEventArgs e)
         {
             if (dataContent.Text == "" || passField.Password == "")
@@ -118,7 +173,7 @@ namespace AesCrypt
                 return;
             }
 
-            if (!MainWindow.encStateBool)
+            if (!encStateBool)
             {
                 CrudFile.SaveDecryptedFile(Encoding.ASCII.GetBytes(dataContent.Text), passField.Password);
             }
@@ -137,36 +192,13 @@ namespace AesCrypt
             passField.Password = "";
             passCheckField.Password = "";
             Application.Current.Shutdown();
-        }
+        } //Exist, Need check
         private void BackToMainMenu(object sender, RoutedEventArgs e)
         {
             this.Hide();
             MainWindow mainWindow = new MainWindow();
             mainWindow.Show();
             this.Close();
-        }
-        
-        private void SaveNewFile(object sender, RoutedEventArgs e)
-        {
-            if (!MainWindow.encStateBool) //decrypted
-            {
-                CrudFile.CallFileDialog(dataContent.Text);
-            }
-            else //encrypted
-            {
-                CrudFile.CallFileDialog(dataContent.Text);
-            }
-            dataContent.Text = "";
-            MessageBox.Show("Successfully!");
-            this.Hide();
-            MainWindow mainWindow = new MainWindow();
-            mainWindow.Show();
-            this.Close();
-        }
-        
-        private void ExitEverywhere(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
+        } //Exist
     }
 }
