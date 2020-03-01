@@ -20,25 +20,26 @@ namespace AesCrypt
     public partial class Cryption : Window
     {
         internal bool encStateBool;
-        public Cryption()
+        private bool crypTypeStandardBool = true;
+
+        public Cryption(bool value)
         {
             InitializeComponent();
+            this.encStateBool = value;
             CustomizationView();
         }
         private void CustomizationView()
         {
-            if (!MainWindow.emptyFileBool)
-            {
-                passPanel.Visibility = Visibility.Collapsed;
-            }
             if (!encStateBool)
             {
+                decryptionModeMenuItem.IsChecked = true;
                 this.Title = "Decryption";
                 passCheckLabel.Visibility = Visibility.Collapsed;
                 passCheckField.Visibility = Visibility.Collapsed;
             }
             else
             {
+                encryptionModeMenuItem.IsChecked = true;
                 this.Title = "Encryption";
                 passCheckLabel.Visibility = Visibility.Visible;
                 passCheckField.Visibility = Visibility.Visible;
@@ -53,27 +54,79 @@ namespace AesCrypt
             passCheckField.Password = "";
         } //Exist
 
-        private void OpenEncryptedFile(object sender, RoutedEventArgs e)
+        private void OpenEncryptedFileByteByte(object sender, RoutedEventArgs e)
         {
             string file = CrudFile.SetFileLocation();
-            dataContent.Text = Encoding.Default.GetString(CrudFile.CallOpenFileDialogB(file));
-        }
+            try
+            {
+                dataContent.Text = Encoding.ASCII.GetString(CrudFile.CallOpenFileDialogB(file));
+                crypTypeStanMenuItem.IsChecked = true;
+            }
+            catch (ArgumentNullException)
+            {
+                return;
+            }
+
+        } //Exist
+        private void OpenEncryptedFileByteBase64(object sender, RoutedEventArgs e)
+        {
+
+            string file = CrudFile.SetFileLocation();
+            try
+            {
+                dataContent.Text = Convert.ToBase64String(CrudFile.CallOpenFileDialogB(file));
+                crypTypeBase64MenuItem.IsChecked = true;
+            }
+            catch (ArgumentNullException)
+            {
+                return;
+            }
+
+        } //Exist
+        private void OpenEncryptedFileBase64Byte(object sender, RoutedEventArgs e)
+        {
+            string file = CrudFile.SetFileLocation();
+            try
+            {
+                dataContent.Text = Encoding.ASCII.GetString(Convert.FromBase64String(CrudFile.CallOpenFileDialogS(file)));
+                crypTypeStanMenuItem.IsChecked = true;
+            }
+            catch(ArgumentNullException)
+            {
+                return;
+            }
+
+        } //Exist
+        private void OpenEncryptedFileBase64Base64(object sender, RoutedEventArgs e)
+        {
+            string file = CrudFile.SetFileLocation();
+            try
+            {
+                dataContent.Text = CrudFile.CallOpenFileDialogS(file);
+                crypTypeBase64MenuItem.IsChecked = true;
+            }
+            catch (ArgumentNullException)
+            {
+                return;
+            }
+
+        } //Exist
         private void OpenDecryptedFile(object sender, RoutedEventArgs e)
         {
             string file = CrudFile.SetFileLocation();
-            dataContent.Text = CrudFile.CallOpenFileDialogS(file);
-        }
+            try
+            {
+                dataContent.Text = CrudFile.CallOpenFileDialogS(file);
+            }
+            catch (ArgumentNullException)
+            {
+                return;
+            }
+        } //Exist
 
         private void SaveContextToFile(object sender, RoutedEventArgs e)
         {
-            if (!encStateBool) //decrypted
-            {
-                CrudFile.CallSaveFileDialog(dataContent.Text);
-            }
-            else //encrypted
-            {
-                CrudFile.CallSaveFileDialog(dataContent.Text);
-            }
+            CrudFile.CallSaveFileDialog(dataContent.Text);
             dataContent.Text = "";
             MessageBox.Show("Successfully!");
             this.Hide();
@@ -114,6 +167,17 @@ namespace AesCrypt
             encStateBool = false;
         } //Exist
 
+        //Cryption type
+        private void CryptionTypeStandard(object sender, RoutedEventArgs e)
+        {
+            crypTypeStandardBool = true;
+        } //Exist
+        private void CryptionTypeBase64(object sender, RoutedEventArgs e)
+        {
+            crypTypeStandardBool = false;
+        } //Exist
+
+
         //PASS PANEL CONTROLLERS
         private void OpenDataLocal(object sender, RoutedEventArgs e)
         {
@@ -128,8 +192,19 @@ namespace AesCrypt
             DataCrypto dataCrypto = new DataCrypto();
             if (!encStateBool) //Decryption
             {
-                string text = dataCrypto.OpenSSLDecrypt(Encoding.ASCII.GetBytes(dataContent.Text), passField.Password);
-                if(text.Equals(""))
+                string text = "";
+                if (!crypTypeStandardBool)
+                {
+                    text = dataCrypto.OpenSSLDecrypt(Convert.FromBase64String(dataContent.Text), passField.Password);
+                    crypTypeBase64MenuItem.IsChecked = true;
+                }
+                else
+                {
+                    text = dataCrypto.OpenSSLDecrypt(Encoding.ASCII.GetBytes(dataContent.Text), passField.Password);
+                    crypTypeStanMenuItem.IsChecked = true;
+                }
+
+                if (text.Equals(""))
                 {
                     passField.Password = "";
                     passCheckField.Password = "";
@@ -152,7 +227,16 @@ namespace AesCrypt
                     MainWindow.emptyFileBool = false;
                     encStateBool = false;
                     CustomizationView();
-                    dataContent.Text = Encoding.ASCII.GetString(data);
+                    if (!crypTypeStandardBool)
+                    {
+                        dataContent.Text = Convert.ToBase64String(data);
+                        crypTypeBase64MenuItem.IsChecked = true;
+                    }
+                    else
+                    {
+                        crypTypeStanMenuItem.IsChecked = true;
+                        dataContent.Text = Encoding.ASCII.GetString(data);
+                    }
                     data = null;
                 }
                 else
@@ -175,13 +259,15 @@ namespace AesCrypt
 
             if (!encStateBool)
             {
-                CrudFile.SaveDecryptedFile(Encoding.ASCII.GetBytes(dataContent.Text), passField.Password);
+                if (!crypTypeStandardBool)
+                    CrudFile.SaveDecryptedFile(Convert.FromBase64String(dataContent.Text), passField.Password);
+                else CrudFile.SaveDecryptedFile(Encoding.ASCII.GetBytes(dataContent.Text), passField.Password);
             }
             else
             {
                 if (passField.Password.Equals(passCheckField.Password))
                 {
-                    CrudFile.SaveEncryptedFile(dataContent.Text, passField.Password);
+                    CrudFile.SaveEncryptedFile(dataContent.Text, passField.Password); //Saves only standart type!!!
                 }
                 else
                     MessageBox.Show("Passwords are not same!");

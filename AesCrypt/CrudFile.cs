@@ -17,11 +17,16 @@ namespace AesCrypt
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
                 return openFileDialog.FileName;
-            else return null;
+            else return "";
         }
-        internal static void CreateNewFile()
+        internal static void CreateNewFile(bool? value)
         {
-            Cryption cryption = new Cryption();
+            Cryption cryption;
+            if (value.GetValueOrDefault())
+            {
+                cryption = new Cryption(true);
+            }
+            else cryption = new Cryption(false);
             cryption.Show();
             App.Current.MainWindow.Close();
 
@@ -55,8 +60,7 @@ namespace AesCrypt
         internal static void OpenFile(string location, string pass)
         {
             byte[] data = CallOpenFileDialogB(location);
-            Cryption cryption = new Cryption();
-            cryption.encStateBool = true;
+            Cryption cryption = new Cryption(false);
             DataCrypto dataCrypto = new DataCrypto();
             cryption.dataContent.Text = dataCrypto.OpenSSLDecrypt(data, pass);
             data = null;
@@ -69,7 +73,6 @@ namespace AesCrypt
                 return;
             }
 
-
             cryption.Show();
             App.Current.MainWindow.Close();
 
@@ -79,7 +82,7 @@ namespace AesCrypt
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
+                Filter = "txt files (*.txt)|*.txt|enc files (*.enc)|*.enc|All files (*.*)|*.*",
                 FilterIndex = 1,
                 RestoreDirectory = true
             };
@@ -95,7 +98,7 @@ namespace AesCrypt
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                Filter = "aes files (*.aes)|*.txt|All files (*.*)|*.*",
+                Filter = "enc files (*.enc)|*.enc|txt files (*.txt)|*.txt|All files (*.*)|*.*",
                 FilterIndex = 1,
                 RestoreDirectory = true
             };
@@ -107,7 +110,7 @@ namespace AesCrypt
             }
         }
 
-        internal static string  CallOpenFileDialogS(string location)
+        internal static string CallOpenFileDialogS(string location)
         {
             try
             {
@@ -130,6 +133,11 @@ namespace AesCrypt
                 MessageBox.Show("Error while reading file! Please, try again.");
                 return null;
             }
+            catch(System.ArgumentException)
+            {
+                return null;
+            }
+            
         }
     }
 }

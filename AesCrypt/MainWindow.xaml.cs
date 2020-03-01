@@ -17,9 +17,6 @@ using System.Windows.Shapes;
 
 namespace AesCrypt
 {
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         internal static bool emptyFileBool;
@@ -100,7 +97,7 @@ namespace AesCrypt
         }
         private void CreateNewFile(object sender, RoutedEventArgs e)
         {
-            CrudFile.CreateNewFile();
+            CrudFile.CreateNewFile(encryptionRadio.IsChecked.GetValueOrDefault());
         }
         private void SaveConvertedFile(object sender, RoutedEventArgs e)
         {

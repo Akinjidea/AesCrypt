@@ -5,14 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AesCrypt"
         mc:Ignorable="d"
-        Title="Encryption" Height="600" Width="1200" WindowStartupLocation="CenterScreen"
+        Title="Encryption " Height="600" Width="1200" WindowStartupLocation="CenterScreen"
         MinWidth="500" MinHeight="300" MaxWidth="1600" MaxHeight="820">
     <Grid>
-        <Menu Height="25" VerticalAlignment="Top">
+        <Menu Height="25" VerticalAlignment="Top" FontSize="13">
             <MenuItem Header="File">
                 <MenuItem Header="New File" Click="SetNewFile"/>
                 <MenuItem Header="Open File" >
-                    <MenuItem Header="Encrypted" Click="OpenEncryptedFile"/>
+                    <MenuItem Header="Encrypted" >
+                        <MenuItem Header="Byte -> Byte" Click="OpenEncryptedFileByteByte"/>
+                        <MenuItem Header="Byte -> Base64" Click="OpenEncryptedFileByteBase64"/>
+                        <MenuItem Header="Base64 -> Byte" Click="OpenEncryptedFileBase64Byte"/>
+                        <MenuItem Header="Base64 -> Base64" Click="OpenEncryptedFileBase64Base64"/>
+                    </MenuItem>
                     <MenuItem Header="Plain text" Click="OpenDecryptedFile"/>
                 </MenuItem>
                 <MenuItem Header="Save File" Click="SaveContextToFile"/>
@@ -25,8 +30,28 @@
                     <MenuItem Header="Hide Panel" Click="HidePassPanel"/>
                 </MenuItem>
                 <MenuItem Header="Mode">
-                    <MenuItem Header="Encryption" Click="SetEncryptionMode"/>
-                    <MenuItem Header="Decryption" Click="SetDecryptionMode"/>
+                    <MenuItem Header="Encryption">
+                        <MenuItem.Icon>
+                            <RadioButton Name="encryptionModeMenuItem" GroupName="cryptionModeMenuItem" Checked="SetEncryptionMode"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Decryption">
+                        <MenuItem.Icon>
+                            <RadioButton Name="decryptionModeMenuItem" GroupName="cryptionModeMenuItem" Checked="SetDecryptionMode"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Cryption Type">
+                    <MenuItem Header="Standart">
+                        <MenuItem.Icon>
+                            <RadioButton Name="crypTypeStanMenuItem" GroupName="cryptionTypeMenuItem" IsChecked="True" Checked="CryptionTypeStandard"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Base64">
+                        <MenuItem.Icon>
+                            <RadioButton Name="crypTypeBase64MenuItem" GroupName="cryptionTypeMenuItem" Checked="CryptionTypeBase64"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
             </MenuItem>
         </Menu>
