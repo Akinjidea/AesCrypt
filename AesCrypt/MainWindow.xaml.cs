@@ -89,7 +89,6 @@ namespace AesCrypt
             var bc = new BrushConverter();
             locationField.Background = (Brush)bc.ConvertFrom("#EEEEEE");
         }
-    
 
         private void SetFileLocation(object sender, RoutedEventArgs e)
         {

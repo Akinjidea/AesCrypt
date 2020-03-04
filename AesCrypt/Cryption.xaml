@@ -29,30 +29,31 @@
                     <MenuItem Header="Show Panel" Click="ShowPassPanel"/>
                     <MenuItem Header="Hide Panel" Click="HidePassPanel"/>
                 </MenuItem>
-                <MenuItem Header="Mode">
-                    <MenuItem Header="Encryption">
-                        <MenuItem.Icon>
-                            <RadioButton Name="encryptionModeMenuItem" GroupName="cryptionModeMenuItem" Checked="SetEncryptionMode"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Header="Decryption">
-                        <MenuItem.Icon>
-                            <RadioButton Name="decryptionModeMenuItem" GroupName="cryptionModeMenuItem" Checked="SetDecryptionMode"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                </MenuItem>
-                <MenuItem Header="Cryption Type">
-                    <MenuItem Header="Standart">
-                        <MenuItem.Icon>
-                            <RadioButton Name="crypTypeStanMenuItem" GroupName="cryptionTypeMenuItem" IsChecked="True" Checked="CryptionTypeStandard"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Header="Base64">
-                        <MenuItem.Icon>
-                            <RadioButton Name="crypTypeBase64MenuItem" GroupName="cryptionTypeMenuItem" Checked="CryptionTypeBase64"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                </MenuItem>
+            </MenuItem>
+            <MenuItem Margin="570,2,0,0" Header="Encryption">
+                <MenuItem.Icon>
+                    <RadioButton Name="encryptionModeMenuItem" GroupName="cryptionModeMenuItem" Checked="SetEncryptionMode"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Margin="0,2,0,0" Header="Decryption">
+                <MenuItem.Icon>
+                    <RadioButton Name="decryptionModeMenuItem" GroupName="cryptionModeMenuItem" Checked="SetDecryptionMode"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Margin="30,2,0,0" Header="Standart">
+                <MenuItem.Icon>
+                    <RadioButton Name="crypTypeStanMenuItem" GroupName="cryptionTypeMenuItem" IsChecked="True" Checked="CryptionTypeStandard"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Margin="0,2,0,0" Header="Base64">
+                <MenuItem.Icon>
+                    <RadioButton Name="crypTypeBase64MenuItem" GroupName="cryptionTypeMenuItem" Checked="CryptionTypeBase64"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Margin="10,2,0,0" Header="To decimal">
+                <MenuItem.Icon>
+                    <CheckBox Name="bitConverterCheckBox" Checked="ConvertingResultToBits" Unchecked="ConvertingResultFromBits"/>
+                </MenuItem.Icon>
             </MenuItem>
         </Menu>
 
