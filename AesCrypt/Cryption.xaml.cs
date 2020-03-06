@@ -21,7 +21,7 @@ namespace AesCrypt
     {
         private bool encStateBool;
         private bool crypTypeStandardBool = true;
-        private bool bitConverterResult = false;
+        private bool bitConverterResult = true;
 
         public Cryption(bool value)
         {
@@ -150,6 +150,49 @@ namespace AesCrypt
             mainWindow.Show();
             this.Close();
         } //Exist
+
+        private void ConvertLocalToDecimal(object sender, RoutedEventArgs e)
+        {
+            string data;
+            try
+            {
+                data = BitConverter.ToString(Convert.FromBase64String(dataContent.Text));
+                dataContent.Text = data;
+                crypTypeStanMenuItem.IsChecked = true;
+                crypTypeStandardBool = true;
+                bitConverterCheckBox.IsChecked = true;
+                bitConverterResult = true;
+            }
+            catch(FormatException)
+            {
+                MessageBox.Show("Can't convert current text to decimal!");
+            }
+            finally
+            {
+                data = null;
+            }
+        }
+        private void ConvertLocalToBase64(object sender, RoutedEventArgs e)
+        {
+            string data;
+            try
+            {
+                data = Convert.ToBase64String(GetBytes(dataContent.Text));
+                dataContent.Text = data;
+                crypTypeBase64MenuItem.IsChecked = true;
+                crypTypeStandardBool = false;
+                bitConverterCheckBox.IsChecked = false;
+                bitConverterResult = false;
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Can't convert current text to Base64!");
+            }
+            finally
+            {
+                data = null;
+            }
+        }
 
         private void ExitEverywhere(object sender, RoutedEventArgs e)
         {

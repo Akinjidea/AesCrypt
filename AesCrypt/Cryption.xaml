@@ -21,6 +21,9 @@
                     <MenuItem Header="Plain text" Click="OpenDecryptedFile"/>
                 </MenuItem>
                 <MenuItem Header="Save File" Click="SaveContextToFile"/>
+                <Separator/>
+                <MenuItem Header="From Base64 to decimal" Click="ConvertLocalToDecimal"/>
+                <MenuItem Header="From decimal to Base64" Click="ConvertLocalToBase64"/>
                 <Separator />
                 <MenuItem Header="Exit" Click="ExitEverywhere"/>
             </MenuItem>
@@ -52,7 +55,7 @@
             </MenuItem>
             <MenuItem Margin="10,2,0,0" Header="To decimal">
                 <MenuItem.Icon>
-                    <CheckBox Name="bitConverterCheckBox" Checked="ConvertingResultToBits" Unchecked="ConvertingResultFromBits"/>
+                    <CheckBox Name="bitConverterCheckBox" IsChecked="True" Checked="ConvertingResultToBits" Unchecked="ConvertingResultFromBits"/>
                 </MenuItem.Icon>
             </MenuItem>
         </Menu>
