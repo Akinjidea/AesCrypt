@@ -33,7 +33,6 @@ namespace AesCrypt
 
             return encryptedBytesWithSalt;
         }
-
         public string OpenSSLDecrypt(byte[] encrypted, string passphrase)
         {
             if (encrypted == null || passphrase == "")
@@ -60,7 +59,6 @@ namespace AesCrypt
 
             return DecryptStringFromBytesAes(encryptedBytes, key, iv);
         }
-
         private static void DeriveKeyAndIV(string passphrase, byte[] salt, out byte[] key, out byte[] iv)
         {
             List<byte> concatenatedHashes = new List<byte>(48);
@@ -93,7 +91,6 @@ namespace AesCrypt
             md5.Clear();
             md5 = null;
         }
-
         static byte[] EncryptStringToBytesAes(string plainText, byte[] key, byte[] iv)
         {
             if (plainText == null || plainText.Length <= 0)
@@ -133,7 +130,6 @@ namespace AesCrypt
 
             return msEncrypt.ToArray();
         }
-
         static string DecryptStringFromBytesAes(byte[] cipherText, byte[] key, byte[] iv)
         {
             // Check arguments.

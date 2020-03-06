@@ -12,41 +12,21 @@ namespace AesCrypt
 {
     class CrudFile
     {
-        internal static void CreateNewFile()
+        internal static string SetFileLocation()
         {
-            Cryption cryption = new Cryption();
-            cryption.Show();
-            App.Current.MainWindow.Close();
-
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
+                return openFileDialog.FileName;
+            else return "";
         }
-
-        internal static void OpenFile(string location, string pass)
+        internal static void CreateNewFile(bool? value)
         {
-            byte[] data;
-            MainWindow.encStateBool = true;
-            Cryption cryption = new Cryption();
-            try
+            Cryption cryption;
+            if (value.GetValueOrDefault())
             {
-                data = File.ReadAllBytes(location);
+                cryption = new Cryption(true);
             }
-            catch(FileNotFoundException)
-            {
-                MessageBox.Show("File not found! Please, try again.");
-                return;
-            }
-            DataCrypto dataCrypto = new DataCrypto();
-            cryption.dataContent.Text = dataCrypto.OpenSSLDecrypt(data, pass);
-            data = null;
-            dataCrypto = null;
-            pass = "";
-
-            if(cryption.dataContent.Text.Equals(""))
-            {
-                cryption = null;
-                return;
-            }
-
-
+            else cryption = new Cryption(false);
             cryption.Show();
             App.Current.MainWindow.Close();
 
@@ -60,9 +40,9 @@ namespace AesCrypt
             dataCrypto = null;
             pass = null;
 
-            CallFileDialog(text);
+            CallSaveFileDialog(text);
             text = null;
-        }    
+        }
         internal static void SaveDecryptedFile(byte[] data, string pass)
         {
             DataCrypto dataCrypto = new DataCrypto();
@@ -71,17 +51,38 @@ namespace AesCrypt
             dataCrypto = null;
             pass = null;
 
-            if(text.Equals(""))
+            if (text.Equals(""))
                 return;
-            CallFileDialog(text);
+            CallSaveFileDialog(text);
             text = null;
         }
 
-        internal static void CallFileDialog(string text)
+        internal static void OpenFile(string location, string pass)
+        {
+            byte[] data = CallOpenFileDialogB(location);
+            Cryption cryption = new Cryption(false);
+            DataCrypto dataCrypto = new DataCrypto();
+            cryption.dataContent.Text = dataCrypto.OpenSSLDecrypt(data, pass);
+            data = null;
+            dataCrypto = null;
+            pass = "";
+
+            if(cryption.dataContent.Text.Equals(""))
+            {
+                cryption = null;
+                return;
+            }
+
+            cryption.Show();
+            App.Current.MainWindow.Close();
+
+        }
+
+        internal static void CallSaveFileDialog(string text)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
+                Filter = "txt files (*.txt)|*.txt|enc files (*.enc)|*.enc|All files (*.*)|*.*",
                 FilterIndex = 1,
                 RestoreDirectory = true
             };
@@ -93,11 +94,11 @@ namespace AesCrypt
 
             }
         }
-        internal static void CallFileDialog(byte[] text)
+        internal static void CallSaveFileDialog(byte[] text)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                Filter = "aes files (*.aes)|*.txt|All files (*.*)|*.*",
+                Filter = "enc files (*.enc)|*.enc|txt files (*.txt)|*.txt|All files (*.*)|*.*",
                 FilterIndex = 1,
                 RestoreDirectory = true
             };
@@ -109,12 +110,34 @@ namespace AesCrypt
             }
         }
 
-        internal static string SetFileLocation()
+        internal static string CallOpenFileDialogS(string location)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == true)
-                return openFileDialog.FileName;
-            else return null;
+            try
+            {
+                return File.ReadAllText(location);
+            }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show("Error while reading file! Please, try again.");
+                return "";
+            }
+        }
+        internal static byte[] CallOpenFileDialogB(string location)
+        {
+            try
+            {
+                return File.ReadAllBytes(location);
+            }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show("Error while reading file! Please, try again.");
+                return null;
+            }
+            catch(System.ArgumentException)
+            {
+                return null;
+            }
+            
         }
     }
 }

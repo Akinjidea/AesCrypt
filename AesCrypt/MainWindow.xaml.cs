@@ -17,24 +17,18 @@ using System.Windows.Shapes;
 
 namespace AesCrypt
 {
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        internal static bool? emptyFileBool;
-        internal static bool encStateBool;
+        internal static bool emptyFileBool;
         public MainWindow()
         {
             InitializeComponent();
             emptyProjectCheckBox.IsChecked = true;
             emptyFileBool = true;
-            encStateBool = true;
         }
 
         private void DecryptionChecked(object sender, RoutedEventArgs e)
         {
-            encStateBool = false;
             if (emptyProjectCheckBox.IsChecked.GetValueOrDefault()) 
                 return;
             passCheckField.Visibility = Visibility.Hidden;
@@ -43,14 +37,12 @@ namespace AesCrypt
         }
         private void DecryptionUnchecked(object sender, RoutedEventArgs e)
         {
-            encStateBool = true;
             if (emptyProjectCheckBox.IsChecked.GetValueOrDefault()) 
                 return;
             passCheckField.Visibility = Visibility.Visible;
             passCheckLabel.Visibility = Visibility.Visible;
             openButton.Visibility = Visibility.Hidden;
         }
-
         private void EmptyProjectChecked(object sender, RoutedEventArgs e)
         {
             this.Height = 320;
@@ -97,17 +89,15 @@ namespace AesCrypt
             var bc = new BrushConverter();
             locationField.Background = (Brush)bc.ConvertFrom("#EEEEEE");
         }
-    
+
         private void SetFileLocation(object sender, RoutedEventArgs e)
         {
             locationField.Text = CrudFile.SetFileLocation();
         }
-
         private void CreateNewFile(object sender, RoutedEventArgs e)
         {
-            CrudFile.CreateNewFile();
+            CrudFile.CreateNewFile(encryptionRadio.IsChecked.GetValueOrDefault());
         }
-
         private void SaveConvertedFile(object sender, RoutedEventArgs e)
         {
             if (locationField.Text.Equals(""))
@@ -120,7 +110,7 @@ namespace AesCrypt
                 MessageBox.Show("Passfiled is empty!");
                 return;
             }
-            if (!encStateBool)
+            if (!encryptionRadio.IsChecked.GetValueOrDefault())
             {
                 CrudFile.SaveDecryptedFile(File.ReadAllBytes(locationField.Text), passField.Password);
             }
