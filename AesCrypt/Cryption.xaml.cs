@@ -21,7 +21,8 @@ namespace AesCrypt
     {
         private bool encStateBool;
         private bool crypTypeStandardBool = true;
-        private bool bitConverterResult = true;
+        private bool toBitConverterResult = true;
+        private bool fromBitConverterResult = true;
 
         public Cryption(bool value)
         {
@@ -48,54 +49,79 @@ namespace AesCrypt
         }
         public static byte[] GetBytes(string value)
         {
-            return value.Split('-').Select(s => byte.Parse(s, System.Globalization.NumberStyles.HexNumber)).ToArray();
+            byte[] result = null;
+            try
+            {
+                result = value.Split('-').Select(s => byte.Parse(s, System.Globalization.NumberStyles.HexNumber)).ToArray();
+                return result;
+            }
+            catch(FormatException)
+            {
+                return result;
+            }
         }
 
-        //FIRST MENUITEM - FILE
+        //FIRST MENUITEM - FILE. Everyone works.
         private void SetNewFile(object sender, RoutedEventArgs e)
         {
             dataContent.Text = "";
             passField.Password = "";
             passCheckField.Password = "";
-        } //Exist
+        } //Doesn't need to change
 
         private void OpenEncryptedFileByteByte(object sender, RoutedEventArgs e)
         {
             string file = CrudFile.SetFileLocation();
+            byte[] data;
             try
             {
-                if (bitConverterResult)
+                data = GetBytes(CrudFile.CallOpenFileDialogS(file));
+                if (data != null)
+                {
+                    dataContent.Text = BitConverter.ToString(data);
+                }
+                else if (fromBitConverterResult)
                     dataContent.Text = BitConverter.ToString(CrudFile.CallOpenFileDialogB(file));
-                else dataContent.Text = Encoding.ASCII.GetString(CrudFile.CallOpenFileDialogB(file));
+                else
+                    dataContent.Text = Encoding.ASCII.GetString(CrudFile.CallOpenFileDialogB(file));
                 crypTypeStanMenuItem.IsChecked = true;
             }
             catch (ArgumentNullException)
             {
                 return;
             }
-
-        } //Exist
+            catch (FormatException)
+            {
+                MessageBox.Show("Incorrect input value!");
+            }
+        } //Exist, Correct!
         private void OpenEncryptedFileByteBase64(object sender, RoutedEventArgs e)
         {
 
             string file = CrudFile.SetFileLocation();
+            byte[] data;
             try
             {
-                dataContent.Text = Convert.ToBase64String(CrudFile.CallOpenFileDialogB(file));
-                crypTypeBase64MenuItem.IsChecked = true;
+                data = GetBytes(CrudFile.CallOpenFileDialogS(file));
+                if (data != null)
+                {
+                    dataContent.Text = Convert.ToBase64String(data);
+                }
+               else dataContent.Text = Convert.ToBase64String(CrudFile.CallOpenFileDialogB(file));
+               crypTypeBase64MenuItem.IsChecked = true;
             }
             catch (ArgumentNullException)
             {
                 return;
             }
 
-        } //Exist
+        } //Exist, Correct!
         private void OpenEncryptedFileBase64Byte(object sender, RoutedEventArgs e)
         {
             string file = CrudFile.SetFileLocation();
             try
             {
-                if (bitConverterResult)
+                if (fromBitConverterResult)
                     dataContent.Text = BitConverter.ToString(Convert.FromBase64String(CrudFile.CallOpenFileDialogS(file)));
                 else dataContent.Text = Encoding.ASCII.GetString(Convert.FromBase64String(CrudFile.CallOpenFileDialogS(file)));
                 crypTypeStanMenuItem.IsChecked = true;
@@ -104,22 +130,34 @@ namespace AesCrypt
             {
                 return;
             }
+            catch(FormatException)
+            {
+                MessageBox.Show("Incorrect input data!");
+                return;
+            }
 
-        } //Exist
+        } //Exist, Correct!
         private void OpenEncryptedFileBase64Base64(object sender, RoutedEventArgs e)
         {
             string file = CrudFile.SetFileLocation();
+            byte[] data;
             try
             {
-                dataContent.Text = CrudFile.CallOpenFileDialogS(file);
+                data = Convert.FromBase64String(CrudFile.CallOpenFileDialogS(file));
+                dataContent.Text = Convert.ToBase64String(data);
                 crypTypeBase64MenuItem.IsChecked = true;
             }
             catch (ArgumentNullException)
             {
                 return;
             }
+            catch(FormatException)
+            {
+                MessageBox.Show("Incorrect input data!");
+                return;
+            }
 
-        } //Exist
+        } //Exist, Correct!
         private void OpenDecryptedFile(object sender, RoutedEventArgs e)
         {
             string file = CrudFile.SetFileLocation();
@@ -135,23 +173,24 @@ namespace AesCrypt
 
         private void SaveContextToFile(object sender, RoutedEventArgs e)
         {
-            if (!bitConverterResult)
+            if (!toBitConverterResult)
                 CrudFile.CallSaveFileDialog(dataContent.Text);
             else
             {
                 byte[] data = GetBytes(dataContent.Text);
+                if (data == null)
+                {
+                    MessageBox.Show("Incorrect context! Can't save as hex data.");
+                    data = null;
+                    return;
+                }
                 CrudFile.CallSaveFileDialog(data);
                 data = null;
             } 
-            dataContent.Text = "";
             MessageBox.Show("Successfully!");
-            this.Hide();
-            MainWindow mainWindow = new MainWindow();
-            mainWindow.Show();
-            this.Close();
         } //Exist
 
-        private void ConvertLocalToDecimal(object sender, RoutedEventArgs e)
+        private void ConvertLocalToHex(object sender, RoutedEventArgs e)
         {
             string data;
             try
@@ -160,16 +199,12 @@ namespace AesCrypt
                 dataContent.Text = data;
                 crypTypeStanMenuItem.IsChecked = true;
                 crypTypeStandardBool = true;
-                bitConverterCheckBox.IsChecked = true;
-                bitConverterResult = true;
+                fromBitConverterCheckBox.IsChecked = true;
+                fromBitConverterResult = true;
             }
             catch(FormatException)
             {
                 MessageBox.Show("Can't convert current text to decimal!");
-            }
-            finally
-            {
-                data = null;
             }
         }
         private void ConvertLocalToBase64(object sender, RoutedEventArgs e)
@@ -181,35 +216,34 @@ namespace AesCrypt
                 dataContent.Text = data;
                 crypTypeBase64MenuItem.IsChecked = true;
                 crypTypeStandardBool = false;
-                bitConverterCheckBox.IsChecked = false;
-                bitConverterResult = false;
+                fromBitConverterCheckBox.IsChecked = false;
+                fromBitConverterResult = false;
             }
-            catch (FormatException)
+            catch (ArgumentNullException)
             {
                 MessageBox.Show("Can't convert current text to Base64!");
-            }
-            finally
-            {
-                data = null;
+                return;
             }
         }
 
         private void ExitEverywhere(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
-        } //Exist
+        } //Exist, Doesn't need to change
 
-        //SECOND MENUITEM - PASS PANEL
+
+        //SECOND MENUITEM - PASS PANEL. Still works.
         //Visibilty Pass Panel
         private void ShowPassPanel(object sender, RoutedEventArgs e)
         {
             passPanel.Visibility = Visibility.Visible;
-        } //Exist
+        } //Exist, Doesn't need to change
         private void HidePassPanel(object sender, RoutedEventArgs e)
         {
             passPanel.Visibility = Visibility.Collapsed;
-        } //Exist
+        } //Exist, Doesn't need to change
 
+        //THIRD PART - CRYPTION MODES AND TYPES. Seems like all of it works.
         //Cryption Mode
         private void SetEncryptionMode(object sender, RoutedEventArgs e)
         {
@@ -217,35 +251,49 @@ namespace AesCrypt
             passCheckLabel.Visibility = Visibility.Visible;
             passCheckField.Visibility = Visibility.Visible;
             encStateBool = true;
-        } //Exist
+        } //Exist, Doesn't need to change
         private void SetDecryptionMode(object sender, RoutedEventArgs e)
         {
             this.Title = "Decryption";
             passCheckLabel.Visibility = Visibility.Collapsed;
             passCheckField.Visibility = Visibility.Collapsed;
             encStateBool = false;
-        } //Exist
+        } //Exist, Doesn't need to change
 
         //Cryption type
         private void CryptionTypeStandard(object sender, RoutedEventArgs e)
         {
             crypTypeStandardBool = true;
-        } //Exist
+        } //Exist, Doesn't need to change
         private void CryptionTypeBase64(object sender, RoutedEventArgs e)
         {
             crypTypeStandardBool = false;
-            bitConverterCheckBox.IsChecked = false;
-            bitConverterResult = false;
-        } //Exist
-        private void ConvertingResultToBits(object sender, RoutedEventArgs e)
+            toBitConverterCheckBox.IsChecked = false;
+            toBitConverterResult = false;
+            fromBitConverterCheckBox.IsChecked = false;
+            fromBitConverterResult = false;
+        } //Exist, Doesn't need to change
+
+        private void ConvertingResultFromBitsChecked(object sender, RoutedEventArgs e)
         {
-            bitConverterResult = true;
+            fromBitConverterResult = true;
             crypTypeStanMenuItem.IsChecked = true;
             crypTypeStandardBool = true;
         }
-        private void ConvertingResultFromBits(object sender, RoutedEventArgs e)
+        private void ConvertingResultFromBitsUnchecked(object sender, RoutedEventArgs e)
         {
-            bitConverterResult = false;
+            fromBitConverterResult = false;
+        }
+
+        private void ConvertingResultToBitsChecked(object sender, RoutedEventArgs e)
+        {
+            toBitConverterResult = true;
+            crypTypeStanMenuItem.IsChecked = true;
+            crypTypeStandardBool = true;
+        }
+        private void ConvertingResultToBitsUnchecked(object sender, RoutedEventArgs e)
+        {
+            toBitConverterResult = false;
         }
 
 
@@ -255,97 +303,107 @@ namespace AesCrypt
             if (dataContent.Text == "" || passField.Password == "")
             {
                 MessageBox.Show("Text is empty!");
-                dataContent.Text = "";
-                passField.Password = "";
-                passCheckField.Password = "";
+                CleanPassWithContext(true);
                 return;
             }
+
             DataCrypto dataCrypto = new DataCrypto();
+
             if (!encStateBool) //Decryption
             {
                 string text = "";
-                if (!crypTypeStandardBool)
-                {
+                if (!crypTypeStandardBool) //From Base64
                     text = dataCrypto.OpenSSLDecrypt(Convert.FromBase64String(dataContent.Text), passField.Password);
-                    crypTypeBase64MenuItem.IsChecked = true;
-                }
-                else if (crypTypeStandardBool && !bitConverterResult)
+                else if (crypTypeStandardBool && fromBitConverterResult) //From Hex
                 {
-                    text = dataCrypto.OpenSSLDecrypt(Encoding.ASCII.GetBytes(dataContent.Text), passField.Password);
-                    crypTypeStanMenuItem.IsChecked = true;
+                    var data = GetBytes(dataContent.Text);
+                    if (data == null)
+                    {
+                        MessageBox.Show("Can't get bytes! Incorrect input data!");
+                        CleanPassWithContext(false);
+                        return;
+                    }
+                    text = dataCrypto.OpenSSLDecrypt(data, passField.Password);
+                    data = null;
                 }
-                else if(crypTypeStandardBool && bitConverterResult)
+                else if (crypTypeStandardBool && !fromBitConverterResult) //From standard
                 {
-                    text = dataCrypto.OpenSSLDecrypt(GetBytes(dataContent.Text), passField.Password);
-                    crypTypeStanMenuItem.IsChecked = true;
+                    MessageBox.Show("This mode doesn't work correct. Please, change it and try again!");
+                    CleanPassWithContext(false);
+                    return;
                 }
 
                 if (text.Equals(""))
                 {
-                    passField.Password = "";
-                    passCheckField.Password = "";
+                    CleanPassWithContext(false);
                     dataCrypto = null;
                     text = null;
                     MessageBox.Show("Error while trying to decrypt data!");
                     return;
                 }
-                MainWindow.emptyFileBool = false;
+
+                if (toBitConverterResult) //to something
+                    dataContent.Text = BitConverter.ToString(Encoding.ASCII.GetBytes(text));
+                else dataContent.Text = text;
+
+                text = null;
                 encStateBool = true;
                 CustomizationView();
-                dataContent.Text = text;
-                text = null;
             }
             else //Encryption
             {
                 if (passField.Password.Equals(passCheckField.Password))
                 {
                     byte[] data = dataCrypto.OpenSSLEncrypt(dataContent.Text, passField.Password);
-                    MainWindow.emptyFileBool = false;
-                    encStateBool = false;
-                    CustomizationView();
-                    if (!crypTypeStandardBool)
-                    {
+                    if (!crypTypeStandardBool) //To Base64
                         dataContent.Text = Convert.ToBase64String(data);
-                        crypTypeBase64MenuItem.IsChecked = true;
-                    }
-                    else if (crypTypeStandardBool && !bitConverterResult)
-                    {
-                        crypTypeStanMenuItem.IsChecked = true;
+                    else if (crypTypeStandardBool && !toBitConverterResult) //To Standard
                         dataContent.Text = Encoding.ASCII.GetString(data);
-                    }
-                    else if (crypTypeStandardBool && bitConverterResult)
-                    {
-                        crypTypeStanMenuItem.IsChecked = true;
+                    else if (crypTypeStandardBool && toBitConverterResult) //To Hex
                         dataContent.Text = BitConverter.ToString(data);
-                    }
                     data = null;
                 }
                 else
+                {
                     MessageBox.Show("Passwords are not same!");
+                    return;
+                }
+                encStateBool = false;
+                CustomizationView();
             }
-            passField.Password = "";
-            passCheckField.Password = "";
+            CleanPassWithContext(false);
             dataCrypto = null;
-        } //Exist, Need check
+        } //Exist
         private void SaveDataToFile(object sender, RoutedEventArgs e)
         {
             if (dataContent.Text == "" || passField.Password == "")
             {
                 MessageBox.Show("Text is empty!");
-                dataContent.Text = "";
-                passField.Password = "";
-                passCheckField.Password = "";
+                CleanPassWithContext(true);
                 return;
             }
-
             if (!encStateBool) //Decr
             {
-                if (!crypTypeStandardBool)
+                if (!crypTypeStandardBool) //
                     CrudFile.SaveDecryptedFile(Convert.FromBase64String(dataContent.Text), passField.Password);
-                else if (crypTypeStandardBool && !bitConverterResult)
-                    CrudFile.SaveDecryptedFile(Encoding.ASCII.GetBytes(dataContent.Text), passField.Password);
-                else if (crypTypeStandardBool && bitConverterResult)
-                    CrudFile.SaveDecryptedFile(GetBytes(dataContent.Text), passField.Password);
+                else if (crypTypeStandardBool && toBitConverterResult)
+                {
+                    var data = GetBytes(dataContent.Text);
+                    if (data == null)
+                    {
+                        MessageBox.Show("Can't get bytes! Incorrect input data!");
+                        CleanPassWithContext(false);
+                        return;
+                    }
+                    CrudFile.SaveDecryptedFile(data, passField.Password);
+                    data = null;
+                }
+                else if (crypTypeStandardBool && !toBitConverterResult)
+                {
+                    MessageBox.Show("This mode doesn't work correct. Please, change it and try again!");
+                    CleanPassWithContext(false);
+                    return;
+                }
                 else MessageBox.Show("Something gone wrong...");
 
             }
@@ -353,9 +411,7 @@ namespace AesCrypt
             {
                 if (passField.Password.Equals(passCheckField.Password))
                 {
-                    if (!crypTypeStandardBool)
-                        MessageBox.Show("Change mode from Base64!");
-                    else CrudFile.SaveEncryptedFile(dataContent.Text, passField.Password); //Saves only standard type!!!
+                    CrudFile.SaveEncryptedFile(dataContent.Text, passField.Password, crypTypeStandardBool, toBitConverterResult);
                 }
                 else
                     MessageBox.Show("Passwords are not same!");
@@ -363,9 +419,7 @@ namespace AesCrypt
             MessageBox.Show("Completed!");
 
             dataContent.Text = "";
-            passField.Password = "";
-            passCheckField.Password = "";
-            Application.Current.Shutdown();
+            CleanPassWithContext(false);
         } //Exist, Need check
         private void BackToMainMenu(object sender, RoutedEventArgs e)
         {
@@ -374,5 +428,12 @@ namespace AesCrypt
             mainWindow.Show();
             this.Close();
         } //Exist
+
+        private void CleanPassWithContext(bool all)
+        {
+            passField.Password = "";
+            passCheckField.Password = "";
+            if (all) dataContent.Text = "";
+        }
     }
 }
