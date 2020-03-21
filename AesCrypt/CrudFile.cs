@@ -32,15 +32,23 @@ namespace AesCrypt
 
         }
 
-        internal static void SaveEncryptedFile(string data, string pass)
+        internal static void SaveEncryptedFile(string data, string pass, bool standardMode, bool toHex)
         {
             DataCrypto dataCrypto = new DataCrypto();
             byte[] text = dataCrypto.OpenSSLEncrypt(data, pass);
+            if(toHex)
+            {
+
+            }
             data = null;
             dataCrypto = null;
             pass = null;
 
-            CallSaveFileDialog(text);
+            if(!standardMode)
+                CallSaveFileDialog(Convert.ToBase64String(text));
+            else if (toHex) 
+                CallSaveFileDialog(BitConverter.ToString(text));
+            else CallSaveFileDialog(text);
             text = null;
         }
         internal static void SaveDecryptedFile(byte[] data, string pass)
@@ -119,6 +127,10 @@ namespace AesCrypt
             catch (FileNotFoundException)
             {
                 MessageBox.Show("Error while reading file! Please, try again.");
+                return "";
+            }
+            catch(ArgumentException)
+            {
                 return "";
             }
         }

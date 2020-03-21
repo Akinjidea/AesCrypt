@@ -107,18 +107,18 @@ namespace AesCrypt
             }
             if (passField.Password.Equals(""))
             {
-                MessageBox.Show("Passfiled is empty!");
+                MessageBox.Show("Passfield is empty!");
                 return;
             }
-            if (!encryptionRadio.IsChecked.GetValueOrDefault())
+            if (!encryptionRadio.IsChecked.GetValueOrDefault()) //Decryption
             {
                 CrudFile.SaveDecryptedFile(File.ReadAllBytes(locationField.Text), passField.Password);
             }
-            else
+            else //Encryption
             {
                 if (passField.Password.Equals(passCheckField.Password))
                 {
-                    CrudFile.SaveEncryptedFile(File.ReadAllText(locationField.Text), passField.Password);
+                    CrudFile.SaveEncryptedFile(File.ReadAllText(locationField.Text), passField.Password, true, false);
                 }
                 else
                     MessageBox.Show("Passwords are not same!");

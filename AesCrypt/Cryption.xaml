@@ -22,8 +22,8 @@
                 </MenuItem>
                 <MenuItem Header="Save File" Click="SaveContextToFile"/>
                 <Separator/>
-                <MenuItem Header="From Base64 to decimal" Click="ConvertLocalToDecimal"/>
-                <MenuItem Header="From decimal to Base64" Click="ConvertLocalToBase64"/>
+                <MenuItem Header="From Base64 to hex" Click="ConvertLocalToHex"/>
+                <MenuItem Header="From hex to Base64" Click="ConvertLocalToBase64"/>
                 <Separator />
                 <MenuItem Header="Exit" Click="ExitEverywhere"/>
             </MenuItem>
@@ -33,7 +33,7 @@
                     <MenuItem Header="Hide Panel" Click="HidePassPanel"/>
                 </MenuItem>
             </MenuItem>
-            <MenuItem Margin="570,2,0,0" Header="Encryption">
+            <MenuItem Margin="390,2,0,0" Header="Encryption">
                 <MenuItem.Icon>
                     <RadioButton Name="encryptionModeMenuItem" GroupName="cryptionModeMenuItem" Checked="SetEncryptionMode"/>
                 </MenuItem.Icon>
@@ -53,9 +53,14 @@
                     <RadioButton Name="crypTypeBase64MenuItem" GroupName="cryptionTypeMenuItem" Checked="CryptionTypeBase64"/>
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Margin="10,2,0,0" Header="To decimal">
+            <MenuItem Margin="30,2,0,0" Header="From hex">
                 <MenuItem.Icon>
-                    <CheckBox Name="bitConverterCheckBox" IsChecked="True" Checked="ConvertingResultToBits" Unchecked="ConvertingResultFromBits"/>
+                    <CheckBox Name="fromBitConverterCheckBox" IsChecked="True" Checked="ConvertingResultFromBitsChecked" Unchecked="ConvertingResultFromBitsUnchecked"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Margin="0,2,0,0" Header="To hex">
+                <MenuItem.Icon>
+                    <CheckBox Name="toBitConverterCheckBox" IsChecked="True" Checked="ConvertingResultToBitsChecked" Unchecked="ConvertingResultToBitsUnchecked"/>
                 </MenuItem.Icon>
             </MenuItem>
         </Menu>
